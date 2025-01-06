@@ -1,0 +1,1 @@
+# squbix-book-store
