@@ -1,0 +1,40 @@
+services:
+  server:
+    build:
+      context: .
+    container_name: app
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis-cache
+      REDIS_PORT: 6379
+    env_file:
+      - .env
+    ports:
+      - 5000:5000
+    networks:
+      - bookstore-app-network
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:latest
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    networks:
+      - bookstore-app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis-data:/data
+
+networks:
+  bookstore-app-network:
+    driver: bridge
+
+volumes:
+  redis-data:

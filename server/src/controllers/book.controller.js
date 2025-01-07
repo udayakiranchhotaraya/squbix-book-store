@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const getRedisClient = require('../configs/redis.config');
 
 const { Book } = require('../models/');
 
@@ -39,22 +40,40 @@ async function createBook(req, res) {
 // Function to get all the books
 async function getAllBooks(req, res) {
     try {
-        // Fetching all books from the database
-        const books = await Book.find();
-
-        // If books are found, responding with the list of books
-        if (books.length > 0) {
-            return res.status(200).json({
-                message: "Books fetched successfully",
-                books: books
-            });
-        } else {
-            return res.status(404).json({ message: "No books found" });
-        }
+      const cacheKey = 'books'; // Defining a cache key
+      const redisClient = await getRedisClient(); // Get the Redis client instance
+  
+      // Check if data exists in the Redis cache
+      const cachedData = await redisClient.get(cacheKey);
+  
+      if (cachedData) {
+        // If data is found in cache, return it
+        return res.status(200).json({
+          'message': "Books fetched successfully",
+          'source': "Cache",
+          'books': JSON.parse(cachedData),
+        });
+      }
+  
+      // If not in cache, fetch data from the database
+      const books = await Book.find();
+  
+      if (books.length > 0) {
+        // Store the result in Redis with a 60-second expiration
+        await redisClient.set(cacheKey, JSON.stringify(books), { EX: 60 });
+  
+        return res.status(200).json({
+          'message': "Books fetched successfully",
+          'source': "Database",
+          'books': books,
+        });
+      } else {
+        return res.status(404).json({ 'message': "No books found" });
+      }
     } catch (error) {
-        return res.status(500).json({ message: "Some error occurred" });
+      return res.status(500).json({ 'message': "Internal Server Error", error: error.message });
     }
-}
+  }
 
 // Function to get details of a single book by id
 async function getBookById(req, res) {
@@ -68,14 +87,14 @@ async function getBookById(req, res) {
         // If the book is found, responding with the book details
         if (book) {
             return res.status(200).json({
-                message: "Book fetched successfully",
-                book: book
+                'message': "Book fetched successfully",
+                'book': book
             });
         } else {
-            return res.status(404).json({ message: "Book not found" });
+            return res.status(404).json({ 'message': "Book not found" });
         }
     } catch (error) {
-        return res.status(500).json({ message: "Some error occurred" });
+        return res.status(500).json({ 'message': "Some error occurred" });
     }
 }
 
@@ -98,14 +117,14 @@ async function updateBookById(req, res) {
         // If the book is found and updated
         if (updatedBook) {
             return res.status(200).json({
-                message: "Book updated successfully",
-                book: updatedBook
+                'message': "Book updated successfully",
+                'book': updatedBook
             });
         } else {
-            return res.status(404).json({ message: "Book not found" });
+            return res.status(404).json({ 'message': "Book not found" });
         }
     } catch (error) {
-        return res.status(500).json({ message: "Some error occurred" });
+        return res.status(500).json({ 'message': "Some error occurred" });
     }
 }
 
@@ -120,14 +139,14 @@ async function deleteBookById(req, res) {
         // If the book is found and deleted
         if (deletedBook) {
             return res.status(200).json({
-                message: "Book deleted successfully",
-                book: deletedBook
+                'message': "Book deleted successfully",
+                'book': deletedBook
             });
         } else {
-            return res.status(404).json({ message: "Book not found" });
+            return res.status(404).json({ 'message': "Book not found" });
         }
     } catch (error) {
-        return res.status(500).json({ message: "Some error occurred" });
+        return res.status(500).json({ 'message': "Some error occurred" });
     }
 }
 

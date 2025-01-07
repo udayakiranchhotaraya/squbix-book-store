@@ -33,11 +33,11 @@ const mongoose = require('mongoose');
  *           description: The genre of the book
  *           example: Fiction
  *       example:
- *         title: To Kill a Mockingbird
- *         description: A novel about racial injustice in the Deep South.
- *         author: Harper Lee
- *         publishedDate: 1960-07-11
- *         genre: Drama
+ *         title: The Great Gatsby
+ *         description: A novel set in the Roaring Twenties about the mysterious Jay Gatsby.
+ *         author: F. Scott Fitzgerald
+ *         publishedDate: 1925-04-10
+ *         genre: Fiction
  */
 const BookSchema = new mongoose.Schema({
     title : {

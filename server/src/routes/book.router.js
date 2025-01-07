@@ -103,7 +103,7 @@ BookRouter.post('/', AdminCheck, createBook);
  *   get:
  *     summary: Fetch all books
  *     tags: [Books]
- *     description: Fetches a list of all books, available for both admin and regular users.
+ *     description: Fetches a list of all books, available for both admin and regular users. Includes caching details in the response.
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -117,6 +117,9 @@ BookRouter.post('/', AdminCheck, createBook);
  *                 message:
  *                   type: string
  *                   example: "Books fetched successfully"
+ *                 source:
+ *                   type: string
+ *                   example: "Cache"
  *                 books:
  *                   type: array
  *                   items:
