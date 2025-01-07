@@ -136,6 +136,18 @@ describe("Book API controller", () => {
             expect(res.statusCode).toBe(200);
             expect(res.body.books).toHaveLength(0);
         });
+
+        it('should fetch books from the cache if available', async () => {
+            await Book.create({ title: 'Book 1', description: 'A great book', author: 'Author 1' });
+      
+            const res = await request(app).get('/books').set('Authorization', `Bearer ${token}`);
+            expect(res.statusCode).toBe(200);
+            expect(res.body).toHaveProperty('source', 'Database');
+      
+            const cachedRes = await request(app).get('/books').set('Authorization', `Bearer ${token}`);
+            expect(cachedRes.statusCode).toBe(200);
+            expect(cachedRes.body).toHaveProperty('source', 'Cache');
+        });
     });
 
     describe("GET /api/books/:id", () => {
