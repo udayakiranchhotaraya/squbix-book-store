@@ -85,15 +85,6 @@ The Bookstore API is a backend application built with Node.js, Express, MongoDB,
   - `200 OK`: User logged in successfully with a JWT token.
   - `401 Unauthorized`: Invalid credentials.
 
-#### Fetch User Profile
-**GET** `/api/user/profile`
-- **Description**: Fetch the authenticated user’s profile.
-- **Headers**:
-  - `Authorization`: `Bearer <JWT>`
-- **Response**:
-  - `200 OK`: User profile details.
-  - `401 Unauthorized`: Missing or invalid token.
-
 ### Book Endpoints
 
 #### Create a Book
