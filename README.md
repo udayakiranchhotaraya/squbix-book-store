@@ -45,7 +45,7 @@ The Bookstore API is a backend application built with Node.js, Express, MongoDB,
 
 5. **Access the API**
    - Base URL: `http://localhost:5000`
-   - API Documentation: `http://localhost:5000/api-docs`
+   - API Documentation: Access the API documentation at `http://localhost:5000/api-docs` using Swagger UI.
 
 ---
 
